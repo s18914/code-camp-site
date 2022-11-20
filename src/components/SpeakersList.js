@@ -1,44 +1,15 @@
 import Speaker from "./Speaker"
-import { data } from "../../SpeakerData";
-import { useEffect, useState } from "react";
 import ReactPlaceHolder from "react-placeholder";
+import useRequestSpeakers, { REQUEST_STATUS } from "../hooks/useRequestSpeakers";
 
 const SpeakersList =({ showSessions }) => {
-  const [speakersData, setSpeakersData] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasErrors, setHasErrors] = useState(false);
-  const [error, setError] = useState("");
-  const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
-
-  useEffect(()=>{
-    async function delayFunc() {
-      try {
-        await delay(1500);
-        setIsLoading(false);
-        setSpeakersData(data);
-      } catch (e) {
-        setIsLoading(false);
-        setError(e);
-        setHasErrors(true);
-      }
-    }
-    delayFunc();
-  }, [])
-
-  function onFavoriteToggle(id) {
-    const data = speakersData.find((rec)=> {return rec.id === id});
-    const speakerDataUpdated = {
-      ...data,
-      favorite: !data.favorite
-    };
-    const newData = speakersData.map((rec)=> {
-      return rec.id === id ? speakerDataUpdated : rec;
-    })
-
-    setSpeakersData(newData);
-  }
-
-  if(hasErrors) {
+  
+  const {
+    speakersData, requestStatus, error,
+    onFavoriteToggle
+  } = useRequestSpeakers(1500);
+  
+  if(requestStatus === REQUEST_STATUS.FAILURE) {
     return (
       <div className="text-danger">
         Error: <b>loading Speakers Data Failed {error}</b>
@@ -52,7 +23,7 @@ const SpeakersList =({ showSessions }) => {
         type="media"
         rows={15}
         className="speakerslist-placeholder"
-        ready={isLoading === false}
+        ready={requestStatus === REQUEST_STATUS.SUCCESS}
       >
         <div className="row">
           {speakersData.map(function (speaker) {
