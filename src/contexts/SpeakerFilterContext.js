@@ -1,15 +1,23 @@
 import { createContext } from "react";
-import useTheme from "../hooks/useTheme"
+import useSpeakerFilter from "../hooks/useSpeakerFilter";
 
 const SpeakerFilterContext = createContext();
 
-function SpeakerFilterProvider({startingShowSessions=true, children}) {
-  const {showSessions, setShowSessions} = useTheme(startingShowSessions);
+function SpeakerFilterProvider({startingShowSessions=true, children, startingEventYear="2019"}) {
+  const {
+    showSessions,setShowSessions,
+    eventYear, setEventYear,
+    searchQuery, setSearchQuery,
+    EVENT_YEARS
+  } = useSpeakerFilter(startingShowSessions, startingEventYear);
 
   return (
-    <SpeakerFilterContext.Provider value={
-      {showSessions, setShowSessions}
-    }>
+    <SpeakerFilterContext.Provider value={{
+      showSessions,setShowSessions,
+      eventYear, setEventYear,
+      searchQuery, setSearchQuery,
+      EVENT_YEARS
+    }}>
       {children}
     </SpeakerFilterContext.Provider>
   )

@@ -2,6 +2,8 @@ import Speaker from "./Speaker"
 import ReactPlaceHolder from "react-placeholder";
 import useRequestDelay, { REQUEST_STATUS } from "../hooks/useRequestDelay";
 import { data } from '../../SpeakerData';
+import { useContext } from "react";
+import { SpeakerFilterContext } from "../contexts/SpeakerFilterContext";
 
 const SpeakersList =() => {
   const {
@@ -11,6 +13,8 @@ const SpeakersList =() => {
     updateRecord
   } = useRequestDelay(1500, data);
   
+  const {searchQuery, eventYear } = useContext(SpeakerFilterContext);
+
   if(requestStatus === REQUEST_STATUS.FAILURE) {
     return (
       <div className="text-danger">
@@ -28,7 +32,19 @@ const SpeakersList =() => {
         ready={requestStatus === REQUEST_STATUS.SUCCESS}
       >
         <div className="row">
-          {speakersData.map(function (speaker) {
+          {speakersData
+          .filter((speaker) => {
+            return (
+              speaker.first.toLowerCase().includes(searchQuery) ||
+              speaker.last.toLowerCase().includes(searchQuery)
+            );
+          })
+          .filter((speaker) => {
+            return speaker.sessions.find((session) => {
+              return session.eventYear === eventYear;
+            })
+          })
+          .map(function (speaker) {
             return(
               <Speaker 
                 key={speaker.id} 
