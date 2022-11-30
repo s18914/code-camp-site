@@ -104,12 +104,13 @@ function SpeakerDemographic() {
   )
 }
 
-function Speaker({ speaker, updateRecord }){
-  const { id, first, last, sessions } = speaker;
+function Speaker({ speaker, updateRecord, insertRecord, deleteRecord }){
   const { showSessions } = useContext(SpeakerFilterContext);
 
   return(
-    <SpeakerProvider speaker={speaker} updateRecord={updateRecord} >
+    <SpeakerProvider speaker={speaker} updateRecord={updateRecord} 
+    insertRecord={insertRecord} deleteRecord={deleteRecord}
+    >
       <div className="col-xs-12 col-sm-12 col-md-6 com-lg-4 ">
         <div className="card card-height p-4 mt-4">
           <SpeakerImage />
