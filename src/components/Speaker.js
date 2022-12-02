@@ -1,6 +1,7 @@
 import React, { useContext, useState} from 'react';
 import { SpeakerFilterContext } from "../contexts/SpeakerFilterContext";
 import { SpeakerProvider, SpeakerContext } from "../contexts/SpeakerContext";
+import SpeakerDelete from "./SpeakerDelete";
 
 function Session({title, room}) {
   return (
@@ -29,18 +30,34 @@ function Sessions() {
   )
 }
 
+function ImageWithFallback({ src, ...props }) {
+  const [error, setError] = useState(false);
+  const [imgSrc, setImgSrc] = useState(src);
+
+  function onError() {
+    if (!error) {
+      setImgSrc("/images/speaker-99999.jpg");
+      setError(true);
+    }
+  }
+
+  return <img src={imgSrc} {...props} onError={onError} />;
+}
+
 function SpeakerImage() {
-  const {speaker: {id, first, last}} = useContext(SpeakerContext);
+  const {
+    speaker: { id, first, last },
+  } = useContext(SpeakerContext);
   return (
     <div className="speaker-img d-flex flex-row justify-content-center align-items-center h-300">
-      <img 
+      <ImageWithFallback
         className="contain-fit"
         src={`/images/speaker-${id}.jpg`}
         width="300"
         alt={`${first} ${last}`}
       />
     </div>
-  )
+  );
 }
 
 function SpeakersFavourite(){
@@ -119,6 +136,7 @@ function Speaker({ speaker, updateRecord, insertRecord, deleteRecord }){
         {!!showSessions && 
           <Sessions />
         }
+        <SpeakerDelete />
       </div>
     </SpeakerProvider>
   )
